@@ -255,7 +255,7 @@ add_to_log2(text, {Nick, Packet}, Room, Opts, State) ->
               % TODO: 约定，Nick就是uid, 好丑陋啊！
               {ok_packet, _, _, _, _, _, _} = emysql:execute(snitch_pool,
                                               <<"INSERT INTO channel_messages (uid, channel_id, content, created_ts, created, updated) values(?, ?, ?, ?, ?, ?)">>,
-                                              [1, ChannelId, Body, Milli, NowDateTime, NowDateTime]),
+                                              [Nick, ChannelId, Body, Milli, NowDateTime, NowDateTime]),
 
 		add_message_to_log(Nick, Message, Room, Opts, State);
 	    {SubEl, _} ->
