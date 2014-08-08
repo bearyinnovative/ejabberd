@@ -57,7 +57,9 @@ Deps = [{p1_cache_tab, ".*", {git, "git://github.com/processone/cache_tab"}},
 	{p1_stun, ".*", {git, "git://github.com/processone/stun"}},
         {p1_yaml, ".*", {git, "git://github.com/processone/p1_yaml"}},
         {xmlrpc, ".*", {git, "git://github.com/rds13/xmlrpc"}},
-        {p1_utils, ".*", {git, "git://github.com/processone/p1_utils"}}],
+        {p1_utils, ".*", {git, "git://github.com/processone/p1_utils"}},
+        {emysql, ".*", {git, "git://github.com/Eonblast/Emysql"}}
+       ],
 
 ConfigureCmd = fun(Pkg, Flags) ->
                        {'get-deps',

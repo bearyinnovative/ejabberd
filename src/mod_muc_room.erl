@@ -69,12 +69,12 @@
 
 %% Module start with or without supervisor:
 -ifdef(NO_TRANSIENT_SUPERVISORS).
--define(SUPERVISOR_START, 
+-define(SUPERVISOR_START,
 	gen_fsm:start(?MODULE, [Host, ServerHost, Access, Room, HistorySize,
 				RoomShaper, Creator, Nick, DefRoomOpts],
 		      ?FSMOPTS)).
 -else.
--define(SUPERVISOR_START, 
+-define(SUPERVISOR_START,
 	Supervisor = gen_mod:get_module_proc(ServerHost, ejabberd_mod_muc_sup),
 	supervisor:start_child(
 	  Supervisor, [Host, ServerHost, Access, Room, HistorySize, RoomShaper,
@@ -127,7 +127,7 @@ init([Host, ServerHost, Access, Room, HistorySize, RoomShaper, Creator, _Nick, D
 				   just_created = true,
 				   room_shaper = Shaper}),
     State1 = set_opts(DefRoomOpts, State),
-    ?INFO_MSG("Created MUC room ~s@~s by ~s", 
+    ?INFO_MSG("Created MUC room ~s@~s by ~s",
 	      [Room, Host, jlib:jid_to_string(Creator)]),
     add_to_log(room_existence, created, State1),
     add_to_log(room_existence, started, State1),
@@ -3184,7 +3184,7 @@ is_allowed_log_change(XEl, StateData, From) ->
       false -> true;
       true ->
 	  allow ==
-	    mod_muc_log:check_access_log(StateData#state.server_host,
+	    mod_muc_save:check_access_log(StateData#state.server_host,
 					 From)
     end.
 
@@ -3549,7 +3549,7 @@ get_config(Lang, StateData, From) ->
 				   ((?SETS):to_list(Config#config.captcha_whitelist)))]
 		    ++
 		    case
-		      mod_muc_log:check_access_log(StateData#state.server_host,
+		      mod_muc_save:check_access_log(StateData#state.server_host,
 						   From)
 			of
 		      allow ->
@@ -4360,7 +4360,7 @@ check_invitation(From, Els, Lang, StateData) ->
                                    jlib:jid_to_string({StateData#state.room,
                                                        StateData#state.host,
                                                        <<"">>})]),
-				
+
 				case
 				  (StateData#state.config)#config.password_protected
 				    of
@@ -4413,7 +4413,7 @@ handle_roommessage_from_nonparticipant(Packet, Lang,
 
 %% Check in the packet is a decline.
 %% If so, also returns the splitted packet.
-%% This function must be catched, 
+%% This function must be catched,
 %% because it crashes when the packet is not a decline message.
 check_decline_invitation(Packet) ->
     #xmlel{name = <<"message">>} = Packet,
@@ -4441,7 +4441,7 @@ send_decline_invitation({Packet, XEl, DEl, ToJID},
     Packet2 = replace_subelement(Packet, XEl2),
     ejabberd_router:route(RoomJID, ToJID, Packet2).
 
-%% Given an element and a new subelement, 
+%% Given an element and a new subelement,
 %% replace the instance of the subelement in element with the new subelement.
 replace_subelement(#xmlel{name = Name, attrs = Attrs,
 			  children = SubEls},
@@ -4463,13 +4463,13 @@ send_error_only_occupants(Packet, Lang, RoomJID, From) ->
 
 add_to_log(Type, Data, StateData)
     when Type == roomconfig_change_disabledlogging ->
-    mod_muc_log:add_to_log(StateData#state.server_host,
+    mod_muc_save:add_to_log(StateData#state.server_host,
 			   roomconfig_change, Data, StateData#state.jid,
 			   make_opts(StateData));
 add_to_log(Type, Data, StateData) ->
     case (StateData#state.config)#config.logging of
       true ->
-	  mod_muc_log:add_to_log(StateData#state.server_host,
+	  mod_muc_save:add_to_log(StateData#state.server_host,
 				 Type, Data, StateData#state.jid,
 				 make_opts(StateData));
       false -> ok

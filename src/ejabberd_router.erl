@@ -328,19 +328,20 @@ do_route(OrigFrom, OrigTo, OrigPacket) ->
       {From, To, Packet} ->
 	  LDstDomain = To#jid.lserver,
 	  case mnesia:dirty_read(route, LDstDomain) of
-	    [] -> ejabberd_s2s:route(From, To, Packet);
-	    [R] ->
-		Pid = R#route.pid,
-		if node(Pid) == node() ->
-		       case R#route.local_hint of
-			 {apply, Module, Function} ->
-			     Module:Function(From, To, Packet);
-			 _ -> Pid ! {route, From, To, Packet}
-		       end;
-		   is_pid(Pid) -> Pid ! {route, From, To, Packet};
-		   true -> drop
-		end;
-	    Rs ->
+          [] -> ejabberd_s2s:route(From, To, Packet);
+          [R] ->
+              Pid = R#route.pid,
+              if node(Pid) == node() ->
+                   case R#route.local_hint of
+                       {apply, Module, Function} ->
+                           Module:Function(From, To, Packet);
+                       _ -> Pid ! {route, From, To, Packet}
+                   end;
+                 is_pid(Pid) -> Pid ! {route, From, To, Packet};
+                 true -> drop
+              end;
+          Rs ->
+
 		Value = case
 			  ejabberd_config:get_local_option({domain_balancing,
 							    LDstDomain}, fun(D) when is_atom(D) -> D end)
