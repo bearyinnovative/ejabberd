@@ -407,11 +407,11 @@ split_terms_macros(Terms) ->
     lists:foldl(
       fun(Term, {TOs, Ms}) ->
 	      case Term of
-		  {define_macro, Key, Value} -> 
+		  {define_macro, Key, Value} ->
 		      case is_correct_macro({Key, Value}) of
-			  true -> 
+			  true ->
 			      {TOs, Ms++[{Key, Value}]};
-			  false -> 
+			  false ->
 			      exit({macro_not_properly_defined, Term})
 		      end;
                   {define_macro, KeyVals} ->
