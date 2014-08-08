@@ -38,7 +38,7 @@ on_filter_packet({From, To, XML} = Packet) ->
         ?INFO_MSG("on_filter_packet Message Type ~p~n",[Type]),
         ?INFO_MSG("on_filter_packet DataTag ~p~n",[DataTag]),
 
-        Timestamp = now_to_microseconds(erlang:now()),
+        Timestamp = now_to_milliseconds(erlang:now()),
         FlatTimeStamp = lists:flatten(io_lib:format("~p", [Timestamp])),
         ?INFO_MSG("on_filter_packet FlatTimestamp ~p~n", [FlatTimeStamp]),
 
@@ -62,8 +62,8 @@ on_filter_packet({From, To, XML} = Packet) ->
 
     Return.
 
-now_to_microseconds({Mega, Sec, _Micro}) ->
+now_to_milliseconds({Mega, Sec, Micro}) ->
     %%Epoch time in milliseconds from 1 Jan 1970
-    ?INFO_MSG("now_to_milliseconds Mega ~p Sec ~p Micro ~p~n", [Mega, Sec, _Micro]),
-    Mega*1000000 + Sec.
+    ?INFO_MSG("now_to_milliseconds Mega ~p Sec ~p Micro ~p~n", [Mega, Sec, Micro]),
+    (Mega*1000000 + Sec)*1000 + Micro div 1000.
 
