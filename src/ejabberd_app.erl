@@ -134,8 +134,17 @@ mysql_init() ->
     % TODO: config
     ?INFO_MSG("mysql_init", []),
     application:start(emysql),
+    % TODO: better config
+    DB = "snitch",
+    %User = ejabberd_config:get_option({odbc_username, global},
+    %                                  fun iolist_to_binary/1,
+    %                                  <<"ejabberd">>),
+    Pass = ejabberd_config:get_option({odbc_password, global},
+                                      %fun(A) -> A end,
+                                      fun binary_to_list/1,
+                                      ""),
     % pool size??
-    emysql:add_pool(snitch_pool, 1, "root", "bWy4$*5K", "localhost", 3306, "snitch", utf8),
+    emysql:add_pool(snitch_pool, 1, "root", Pass, "localhost", 3306, DB, utf8),
     ?INFO_MSG("mysql_started", []).
 
 %% Start all the modules in all the hosts
